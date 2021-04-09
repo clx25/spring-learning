@@ -2,14 +2,11 @@ package com.learn;
 
 
 import com.learn.config.*;
-import com.learn.controller.InsertTest;
 import com.learn.controller.InsertTestImpll;
+import com.learn.controller.LearnController;
 import com.learn.test.LookupTest;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.cglib.core.DebuggingClassWriter;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import com.learn.controller.LearnController;
 
 public class LearnApp {
 	public static void main(String[] args) throws NoSuchMethodException {
@@ -17,6 +14,7 @@ public class LearnApp {
 		//把cglib代理类输出到指定目录
 //		System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "D:\\class");
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
+
 		ac.register(LearnConfig.class);
 //		ac.registerBean(LearnConfig.class, ()->{
 //					System.out.println("这个是registerBean的Supplier");
@@ -29,7 +27,7 @@ public class LearnApp {
 		ac.getEnvironment().setRequiredProperties("555");
 //		ac.registerBean("applicationEventMulticaster", TestApplicationEventMulticaster.class);
 		ConfigurableListableBeanFactory beanFactory = ac.getBeanFactory();
-		beanFactory.ignoreDependencyInterface(InsertTest.class);
+//		beanFactory.ignoreDependencyInterface(InsertTest.class);
 //		ac.publishEvent(new MyPostProcessor("666"));
 		ac.refresh();
 
@@ -52,6 +50,10 @@ public class LearnApp {
 
 		LookupTest lookupTest = ac.getBean("lookupTest", LookupTest.class);
 		System.out.println(lookupTest.lookup());
+
+//		ProfileTest profileTest = ac.getBean("profileTest", ProfileTest.class);
+//		System.out.println(profileTest);
+
 		ac.getBeanFactory().destroySingletons();
 	}
 

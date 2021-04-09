@@ -1,25 +1,19 @@
 /**
- *    Copyright 2009-2020 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2020 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.submitted.xml_external_ref;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.sql.SQLException;
 
 import org.apache.ibatis.BaseDataTest;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
@@ -32,65 +26,71 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class SameIdTest {
 
-  @Test
-  void testCrossReferenceXmlConfig() throws Exception {
-    testCrossReference(getSqlSessionFactoryXmlConfig());
-  }
+	private static void initDb(SqlSessionFactory sqlSessionFactory) throws IOException, SQLException {
+		BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+				"org/apache/ibatis/submitted/xml_external_ref/CreateDB.sql");
+	}
 
-  @Test
-  void testCrossReferenceJavaConfig() throws Exception {
-    testCrossReference(getSqlSessionFactoryJavaConfig());
-  }
+	@Test
+	void testCrossReferenceXmlConfig() throws Exception {
+		testCrossReference(getSqlSessionFactoryXmlConfig());
+	}
 
-  private void testCrossReference(SqlSessionFactory sqlSessionFactory) {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      SameIdPersonMapper personMapper = sqlSession.getMapper(SameIdPersonMapper.class);
-      Person person = personMapper.select(1);
-      assertEquals((Integer) 1, person.getId());
-      assertEquals(2, person.getPets().size());
-      assertEquals((Integer) 2, person.getPets().get(1).getId());
+	@Test
+	void testCrossReferenceJavaConfig() throws Exception {
+		testCrossReference(getSqlSessionFactoryJavaConfig());
+	}
 
-      Pet pet = personMapper.selectPet(1);
-      assertEquals(Integer.valueOf(1), pet.getId());
+	private void testCrossReference(SqlSessionFactory sqlSessionFactory) {
+		try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+			SameIdPersonMapper personMapper = sqlSession.getMapper(SameIdPersonMapper.class);
+			Person person = personMapper.select(1);
+			assertEquals((Integer) 1, person.getId());
+			assertEquals(2, person.getPets().size());
+			assertEquals((Integer) 2, person.getPets().get(1).getId());
 
-      SameIdPetMapper petMapper = sqlSession.getMapper(SameIdPetMapper.class);
-      Pet pet2 = petMapper.select(3);
-      assertEquals((Integer) 3, pet2.getId());
-      assertEquals((Integer) 2, pet2.getOwner().getId());
-    }
-  }
+			Pet pet = personMapper.selectPet(1);
+			assertEquals(Integer.valueOf(1), pet.getId());
 
-  private SqlSessionFactory getSqlSessionFactoryXmlConfig() throws Exception {
-    try (Reader configReader = Resources
-        .getResourceAsReader("org/apache/ibatis/submitted/xml_external_ref/SameIdMapperConfig.xml")) {
-      SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configReader);
+			SameIdPetMapper petMapper = sqlSession.getMapper(SameIdPetMapper.class);
+			Pet pet2 = petMapper.select(3);
+			assertEquals((Integer) 3, pet2.getId());
+			assertEquals((Integer) 2, pet2.getOwner().getId());
+		}
+	}
 
-      initDb(sqlSessionFactory);
+	private SqlSessionFactory getSqlSessionFactoryXmlConfig() throws Exception {
+		try (Reader configReader = Resources
+				.getResourceAsReader("org/apache/ibatis/submitted/xml_external_ref/SameIdMapperConfig.xml")) {
+			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configReader);
 
-      return sqlSessionFactory;
-    }
-  }
+			initDb(sqlSessionFactory);
 
-  private SqlSessionFactory getSqlSessionFactoryJavaConfig() throws Exception {
-    Configuration configuration = new Configuration();
-    Environment environment = new Environment("development", new JdbcTransactionFactory(),
-        new UnpooledDataSource("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:xmlextref", null));
-    configuration.setEnvironment(environment);
-    configuration.addMapper(SameIdPersonMapper.class);
-    configuration.addMapper(SameIdPetMapper.class);
+			return sqlSessionFactory;
+		}
+	}
 
-    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+	private SqlSessionFactory getSqlSessionFactoryJavaConfig() throws Exception {
+		Configuration configuration = new Configuration();
+		Environment environment = new Environment("development", new JdbcTransactionFactory(),
+				new UnpooledDataSource("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:xmlextref", null));
+		configuration.setEnvironment(environment);
+		configuration.addMapper(SameIdPersonMapper.class);
+		configuration.addMapper(SameIdPetMapper.class);
 
-    initDb(sqlSessionFactory);
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 
-    return sqlSessionFactory;
-  }
+		initDb(sqlSessionFactory);
 
-  private static void initDb(SqlSessionFactory sqlSessionFactory) throws IOException, SQLException {
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-        "org/apache/ibatis/submitted/xml_external_ref/CreateDB.sql");
-  }
+		return sqlSessionFactory;
+	}
 
 }

@@ -28,7 +28,7 @@ public class MyBatisConfig {
 	private DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.h2.Driver");
-		dataSource.setUrl("jdbc:h2:file:~/learn-spring-mybatis");
+		dataSource.setUrl("jdbc:h2:~/mybatis;MV_STORE=false");
 		dataSource.setUsername("root");
 		dataSource.setPassword("123456");
 		return dataSource;

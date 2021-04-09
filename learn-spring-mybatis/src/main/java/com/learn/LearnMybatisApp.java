@@ -10,6 +10,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class LearnMybatisApp {
 
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(MyBatisConfig.class);
+
 		UserController uc = ac.getBean("userController", UserController.class);
 		uc.list();
 		UserController uc2 = ac.getBean("userController", UserController.class);
@@ -29,7 +31,8 @@ public class LearnMybatisApp {
 	//mybatis的日志初始化位于org.apache.ibatis.logging.LogFactory
 	@Test
 	public void mybatis() throws IOException {
-
+		//这个设置让xml文件允许访问http，mybatis-config.xml需要从网络获取dtd文件
+		System.setProperty("javax.xml.accessExternalDTD", "all");
 		String resource = "mybatis-config.xml";
 		InputStream inputStream = Resources.getResourceAsStream(resource);
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);

@@ -15,23 +15,28 @@
 --
 
 drop table users if exists
-go
+    go
 
 drop procedure getusers if exists
-go
+    go
 
-create table users (
-  id int,
-  name varchar(20)
+create table users
+(
+    id   int,
+    name varchar(20)
 )
-go
+    go
 
 create procedure getusers()
-modifies sql data
-dynamic result sets 1
+    modifies sql data
+    dynamic result sets 1
 BEGIN ATOMIC
-  declare cur cursor for select * from users order by id;
-  open cur;
+  declare
+cur cursor for
+select *
+from users
+order by id;
+open cur;
 END
 go
 

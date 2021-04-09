@@ -314,7 +314,7 @@ configure([rootProject] + javaProjects) { project ->
 		apply plugin: "org.jetbrains.dokka"
 		compileKotlin {
 			kotlinOptions {
-				jvmTarget = "1.8"
+				jvmTarget = "11"
 				freeCompilerArgs = ["-Xjsr305=strict"]
 				allWarningsAsErrors = true
 			}

@@ -2,7 +2,6 @@ package com.learn.test;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

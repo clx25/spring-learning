@@ -16,15 +16,14 @@
 
 package org.springframework.transaction.event;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.event.ApplicationListenerMethodAdapter;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -117,8 +117,10 @@ public final class SpringFactoriesLoader {
 	 * @throws IllegalArgumentException if an error occurs while loading factory names
 	 * @see #loadFactories
 	 */
+	//这个方法的作用就是返回META-INF/spring.factories文件中，以factoryType的全类名为key的所有value，这些value也是全类名
 	public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
 		String factoryTypeName = factoryType.getName();
+		//这里返回的是一个LinkedMultiValueMap，从这个map中获取key为factoryTypeName的值
 		return loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList());
 	}
 
@@ -129,14 +131,24 @@ public final class SpringFactoriesLoader {
 		}
 
 		try {
+			//获取当前环境所有的META-INF/spring.factories路径
 			Enumeration<URL> urls = (classLoader != null ?
 					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :
 					ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
 			result = new LinkedMultiValueMap<>();
+			//判断有没有下一个spring.factories文件
 			while (urls.hasMoreElements()) {
 				URL url = urls.nextElement();
+				//获取文件流
 				UrlResource resource = new UrlResource(url);
+				//读取数据，转为properties
 				Properties properties = PropertiesLoaderUtils.loadProperties(resource);
+				/*
+				spring.factories中有多个key，一个key对应多个value，并用逗号隔开
+				这个循环就是解析获取的properties，并以键值对的方式存储
+				这个result是LinkedMultiValueMap，是spring重写的map,数据结构为Map<K, List<V>>
+				所以能一个key存多个值
+				 */
 				for (Map.Entry<?, ?> entry : properties.entrySet()) {
 					String factoryTypeName = ((String) entry.getKey()).trim();
 					for (String factoryImplementationName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) {
@@ -144,6 +156,7 @@ public final class SpringFactoriesLoader {
 					}
 				}
 			}
+			//保存到缓存
 			cache.put(classLoader, result);
 			return result;
 		}

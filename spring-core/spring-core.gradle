@@ -19,7 +19,7 @@ configurations {
 	objenesis
 	coroutines
 }
-
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 task cglibRepackJar(type: ShadowJar) {
 	baseName = 'spring-cglib-repack'
 	version = cglibVersion

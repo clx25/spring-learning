@@ -16,8 +16,8 @@
        limitations under the License.
 
 -->
-<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/XDOC/2.0"
+		  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
 	<properties>
 		<title>MyBatis 3 | Primeros pasos</title>
@@ -29,34 +29,34 @@
 		<section name="Primeros pasos">
 
 
-    <subsection name="Instalación">
-      <p>
-        Para usar MyBatis sólo tienes que incluir el fichero
-        <a href="https://github.com/mybatis/mybatis-3/releases">mybatis-x.x.x.jar</a>
-        en el classpath.
-      </p>
-      <p>
-        Si usas Maven añade esta dependencia en tu pom.xml:
-      </p>
-        <source><![CDATA[
+			<subsection name="Instalación">
+				<p>
+					Para usar MyBatis sólo tienes que incluir el fichero
+					<a href="https://github.com/mybatis/mybatis-3/releases">mybatis-x.x.x.jar</a>
+					en el classpath.
+				</p>
+				<p>
+					Si usas Maven añade esta dependencia en tu pom.xml:
+				</p>
+				<source><![CDATA[
 <dependency>
   <groupId>org.mybatis</groupId>
   <artifactId>mybatis</artifactId>
   <version>x.x.x</version>
 </dependency>]]></source>
-    </subsection>
+			</subsection>
 
 			<subsection name="Cómo crear un SqlSessionFactory a partir de XML">
 
-			<p>
-				Una aplicación que usa MyBatis debe utilizar una instancia de
-				SqlSessionFactory. Se puede obtener una instancia de
-				SqlSessionFactory mediante un SqlSessionFactoryBuilder. Un
-				SqlSessionFactoryBuilder
-				puede construir una instancia de SqlSessionFactory a partir de un fichero
-				de configuración XML o de una
-				instancia personalizada de la clase Configuration.
-			</p>
+				<p>
+					Una aplicación que usa MyBatis debe utilizar una instancia de
+					SqlSessionFactory. Se puede obtener una instancia de
+					SqlSessionFactory mediante un SqlSessionFactoryBuilder. Un
+					SqlSessionFactoryBuilder
+					puede construir una instancia de SqlSessionFactory a partir de un fichero
+					de configuración XML o de una
+					instancia personalizada de la clase Configuration.
+				</p>
 				<p>
 					Crear una instancia SqlSessionFactory desde un fichero xml es muy
 					sencillo. Se recomienda usar un
@@ -147,7 +147,7 @@ SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(confi
 				</p>
 			</subsection>
 			<subsection
-				name="Cómo obtener un SqlSession a partir del SqlSessionFactory">
+					name="Cómo obtener un SqlSession a partir del SqlSessionFactory">
 				<p>
 					Ahora que dispones de un SqlSessionFactory, tal y como su nombre indica,
 					puedes adquirir una instancia
@@ -220,7 +220,8 @@ SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(confi
 					(fully qualified) “org.mybatis.example.BlogMapper.selectBlog” tal y
 					como muestra el código a continuación:
 				</p>
-				<source><![CDATA[Blog blog = session.selectOne("org.mybatis.example.BlogMapper.selectBlog", 101);]]></source>
+				<source>
+					<![CDATA[Blog blog = session.selectOne("org.mybatis.example.BlogMapper.selectBlog", 101);]]></source>
 				<p>
 					Observa el gran parecido que hay entre esta llamada y la llamada a una
 					clase java y hay una razón para eso. Este literal puede mapearse
@@ -238,7 +239,7 @@ Blog blog = mapper.selectBlog(101);]]></source>
 					que los errores se detectan en tiempo de compilación. Segundo, si
 					tu IDE dispone de autocompletado de código podrás aprovecharlo.
 				</p>
-				<hr />
+				<hr/>
 				<p>
 					<span class="label important">NOTA</span>
 					<strong>Una nota sobre los namespaces.</strong>
@@ -277,7 +278,7 @@ Blog blog = mapper.selectBlog(101);]]></source>
 						que el nombre es ambiguo y que debe ser “fully qualified”.
 					</li>
 				</ul>
-				<hr />
+				<hr/>
 				<p>
 					Hay otro aspecto importante sobre las clases Mapper como BlogMapper.
 					Sus mapped statements pueden no estar en ningún fichero XML. En su
@@ -306,12 +307,14 @@ public interface BlogMapper {
 			<subsection name="Ámbito y ciclo de vida">
 				<p>Es muy importante entender los distintos ámbitos y ciclos de vida
 					de las clases de las que hemos hablado hasta ahora. Usarlas de
-					forma incorrecta puede traer serias complicaciones.</p>
-				<hr />
+					forma incorrecta puede traer serias complicaciones.
+				</p>
+				<hr/>
 				<p>
 					<span class="label important">NOTA</span>
 					<strong>Ciclo de vida de los objetos y frameworks de inyección de
-						dependencias</strong>
+						dependencias
+					</strong>
 				</p>
 				<p>
 					Los frameworks de inyección de dependencias pueden crear
@@ -324,7 +327,7 @@ public interface BlogMapper {
 					conocer más detalles sobre cómo usar
 					MyBatis con estos frameworks.
 				</p>
-				<hr />
+				<hr/>
 
 				<h4>SqlSessionFactoryBuilder</h4>
 				<p>Esta clase puede instanciarse, usarse y desecharse. No es
@@ -345,7 +348,8 @@ public interface BlogMapper {
 					lo contrario debería considerarse código sospechoso. Por tanto el
 					mejor ámbito para el SqlSessionFactory es el ámbito de aplicación.
 					Esto puede conseguirse de muchas formas. Lo más sencillo es usar el
-					patrón Singleton o el Static Singleton. </p>
+					patrón Singleton o el Static Singleton.
+				</p>
 				<h4>SqlSession</h4>
 				<p>Cada thread (hilo de ejecución) debería tener su propia instancia
 					de SqlSession. Las instancias de SqlSession no son thread safe y no
@@ -360,12 +364,14 @@ public interface BlogMapper {
 					devuelvas la respuesta. Cerrar la SqlSession es muy importante.
 					Deberías asegurarte de que se cierra con un bloque finally. A
 					continuación se muestra el patrón estándar para asegurarse de que
-					las sesiones se cierran correctamente.</p>
+					las sesiones se cierran correctamente.
+				</p>
 				<source><![CDATA[try (SqlSession session = sqlSessionFactory.openSession()) {
   // do work
 }]]></source>
 				<p>Usando este patrón en todo el código se asegura que los recursos
-					de base de datos se liberarán correctamente.</p>
+					de base de datos se liberarán correctamente.
+				</p>
 				<h4>Instancias de mapper</h4>
 				<p>Los mappers son interfaces que creas como enlace con los mapped
 					statements. Las instancias de mappers se obtienen de una
@@ -379,7 +385,8 @@ public interface BlogMapper {
 					dentro de una misma llamada, debes tener cuidado porque puede que
 					la situación se te vaya de las manos. Hazlo fácil (keep it simple)
 					y mantén los mappers en el ámbito de método. Este ejemplo muestra
-					esta práctica:</p>
+					esta práctica:
+				</p>
 				<source><![CDATA[try (SqlSession session = sqlSessionFactory.openSession()) {
   BlogMapper mapper = session.getMapper(BlogMapper.class);
   // do work
