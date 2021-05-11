@@ -30,6 +30,14 @@ import java.lang.annotation.*;
  * </pre>
  * @author Eduardo Macarron
  */
+
+/**
+ * 用于转换查询返回值类型
+ * MappedTypes(String.class)//这个注解表示转换String类型
+ * public class MyTypeHandler implements TypeHandler<String>{
+ * }
+ * 这个类需要注册到mybatis中
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -255,7 +255,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		 * 2. 用来解决循环依赖
 		 */
 		Object sharedInstance = getSingleton(beanName);
-		//在刷新之前手动注入单例对象，存在循环依赖都可能不为空
+		//获取到对象
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
 				if (isSingletonCurrentlyInCreation(beanName)) {
@@ -266,7 +266,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					logger.trace("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
-
+			//这里实现factoryBean
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 

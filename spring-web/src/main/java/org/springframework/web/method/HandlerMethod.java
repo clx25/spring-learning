@@ -329,6 +329,7 @@ public class HandlerMethod {
 	 * the bean name is resolved before a {@link HandlerMethod} is created and returned.
 	 */
 	public HandlerMethod createWithResolvedBean() {
+		//当前的bean可能还是个字符串，所有判断是字符串的话，就通过beanFactory初始化
 		Object handler = this.bean;
 		if (this.bean instanceof String) {
 			Assert.state(this.beanFactory != null, "Cannot resolve bean name without BeanFactory");

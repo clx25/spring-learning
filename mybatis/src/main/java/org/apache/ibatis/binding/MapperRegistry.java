@@ -38,7 +38,11 @@ public class MapperRegistry {
 
 	@SuppressWarnings("unchecked")
 	public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-		//获取代理工厂，knownMappers中的值在MapperFactoryBean中被注入
+
+		/**
+		 * 获取代理工厂，knownMappers中的值在MapperFactoryBean中
+		 * 或{@link MapperRegistry#addMapper}中被注入
+		 */
 		final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
 		if (mapperProxyFactory == null) {
 			throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
@@ -56,21 +60,26 @@ public class MapperRegistry {
 	}
 
 	public <T> void addMapper(Class<T> type) {
+		//只解析接口
 		if (type.isInterface()) {
 			if (hasMapper(type)) {
 				throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
 			}
 			boolean loadCompleted = false;
 			try {
+				//把mapper放入集合，在需要的时候获取
 				knownMappers.put(type, new MapperProxyFactory<>(type));
 				// It's important that the type is added before the parser is run
 				// otherwise the binding may automatically be attempted by the
 				// mapper parser. If the type is already known, it won't try.
-				//mapper的注解解析创建器，这个config是configuration，在创建本类对象时传入的
+				/**
+				 * mapper的注解解析创建器，这个config是在{@link Configuration#mapperRegistry}传入的
+				 */
 				MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
 				parser.parse();
 				loadCompleted = true;
 			} finally {
+				//如果解析过程中抛出异常，那么这个loadCompleted应该为false，就把保存的mapper删除
 				if (!loadCompleted) {
 					knownMappers.remove(type);
 				}

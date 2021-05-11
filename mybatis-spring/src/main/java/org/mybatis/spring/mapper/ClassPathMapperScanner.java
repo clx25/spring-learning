@@ -242,14 +242,16 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
       // the mapper interface is the original class of the bean
       // but, the actual class of the bean is MapperFactoryBean
-      //使用beanClassName的class类型作为构造器参数
-      //选择beanClassName的class类型作为参数的构造器来创建对象，这里的对象值的是MapperFactoryBean
+
+	//添加按泛型匹配的类型参数值，就是使用带泛型的构造器
       definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName); // issue #59
 
-      //把这个beanDefinition设置为MapperFactoryBean的beanDefinition
+		/**
+		 *把这个beanDefinition设置为{@link MapperFactoryBean}的beanDefinition
+		 */
       definition.setBeanClass(this.mapperFactoryBeanClass);
 
-      //通过bean中的set方法给该属性
+      //通过bean中的set方法给该属性赋值
       definition.getPropertyValues().add("addToConfig", this.addToConfig);
 
       // Attribute for MockitoPostProcessor

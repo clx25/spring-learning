@@ -30,6 +30,10 @@ import java.lang.annotation.*;
  * </pre>
  * @author Eduardo Macarron
  */
+
+/**
+ * 用来转换{@link JdbcType}类型，类似的查看{@link MappedTypes}
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

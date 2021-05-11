@@ -894,7 +894,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							isEagerInit = (factory instanceof SmartFactoryBean &&
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
-						//如果是立即加载的，那么在这里就直接调用factoryBean
+						//如果是立即加载的，那么初始化factoryBean
+						//如果不是，表示这个factoryBean是懒加载的，会在第一次获取bean的时候才初始化
 						if (isEagerInit) {
 							getBean(beanName);
 						}

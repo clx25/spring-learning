@@ -267,7 +267,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 		//用来存放配置类
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
-		//获取所有在刷新之前添加到bd中的bdName
+		//获取所有在refresh之前添加到bd中的bdName
 		String[] candidateNames = registry.getBeanDefinitionNames();
 
 		for (String beanName : candidateNames) {

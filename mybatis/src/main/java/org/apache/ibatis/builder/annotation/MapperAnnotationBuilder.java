@@ -73,21 +73,27 @@ public class MapperAnnotationBuilder {
 
 	public void parse() {
 		String resource = type.toString();
+		//如果这个类没有被加载过
 		if (!configuration.isResourceLoaded(resource)) {
-			//尝试加载mapper.xml
+			//尝试加载这个类对应的xml文件
 			loadXmlResource();
+			//添加到集合中，表示已经被加载过
 			configuration.addLoadedResource(resource);
+			//设置命名空间
 			assistant.setCurrentNamespace(type.getName());
 			//解析二级缓存，通过判断CacheNamespace注解判断是否开启二级缓存
 			parseCache();
+			//mybatis中的二级缓存是mapper级别，通过@CacheNamespaceRef注解可以引用其他mapper的缓存，这个方法就是解析这个的。
 			parseCacheRef();
 			for (Method method : type.getMethods()) {
+				//如果是桥接方法或者是接口的default方法
 				if (!canHaveStatement(method)) {
 					continue;
 				}
+				//解析@Selset或@SelectProvider(这个注解就是指定一个类和方法，用这个方法返回的sql执行查询)，如果存在的话
 				if (getAnnotationWrapper(method, false, Select.class, SelectProvider.class).isPresent()
-						&& method.getAnnotation(ResultMap.class) == null) {
-
+						&& method.getAnnotation(ResultMap.class) == null) {//并且没有@ResultMap注解
+					//如果没有ResultMap，那么就通过解析生成一个ResultMap，并注册到configuration中
 					parseResultMap(method);
 				}
 				try {
@@ -103,6 +109,11 @@ public class MapperAnnotationBuilder {
 
 	private boolean canHaveStatement(Method method) {
 		// issue #237
+		/**
+		 * https://stackoverflow.com/questions/5007357/java-generics-bridge-method
+		 * https://github.com/mybatis/mybatis-3/issues/237
+		 * 这个default方法表示的是接口的default方法
+		 */
 		return !method.isBridge() && !method.isDefault();
 	}
 
@@ -259,7 +270,7 @@ public class MapperAnnotationBuilder {
 	void parseStatement(Method method) {
 		final Class<?> parameterTypeClass = getParameterType(method);
 		final LanguageDriver languageDriver = getLanguageDriver(method);
-
+		//如果存在statementAnnotationTypes中包含的注解的话，执行lambda表达式内的逻辑
 		getAnnotationWrapper(method, true, statementAnnotationTypes).ifPresent(statementAnnotation -> {
 			//内部获取注解的值，并解析集合，占位符等转为sql语句
 			final SqlSource sqlSource = buildSqlSource(statementAnnotation.getAnnotation(), parameterTypeClass, languageDriver, method);
@@ -292,6 +303,7 @@ public class MapperAnnotationBuilder {
 			StatementType statementType = StatementType.PREPARED;
 			ResultSetType resultSetType = configuration.getDefaultResultSetType();
 			boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+			//如果不是查询，就要刷新缓存
 			boolean flushCache = !isSelect;
 			boolean useCache = isSelect;
 			if (options != null) {
@@ -315,6 +327,7 @@ public class MapperAnnotationBuilder {
 				if (resultMapAnnotation != null) {
 					resultMapId = String.join(",", resultMapAnnotation.value());
 				} else {
+					//如果方法没有ResultMap注解，就构建一个MapName，在{@link org.apache.ibatis.builder.annotation.MapperAnnotationBuilder.parseResultMap}已经创建了ResultMap，需要用一个id去获取
 					resultMapId = generateResultMapName(method);
 				}
 			}

@@ -55,6 +55,7 @@ public class GenericApplicationListenerAdapter implements GenericApplicationList
 	public GenericApplicationListenerAdapter(ApplicationListener<?> delegate) {
 		Assert.notNull(delegate, "Delegate listener must not be null");
 		this.delegate = (ApplicationListener<ApplicationEvent>) delegate;
+		//获取监听器的泛型类型
 		this.declaredEventType = resolveDeclaredEventType(this.delegate);
 	}
 

@@ -71,7 +71,7 @@ import org.springframework.web.util.UrlPathHelper;
  * @author Arjen Poutsma
  * @since 5.2
  */
-class DefaultServerRequest implements ServerRequest {
+class  DefaultServerRequest implements ServerRequest {
 
 	private final ServletServerHttpRequest serverHttpRequest;
 

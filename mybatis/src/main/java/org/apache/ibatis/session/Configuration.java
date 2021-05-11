@@ -80,11 +80,15 @@ import java.util.function.BiFunction;
  * @author Clinton Begin
  */
 public class Configuration {
-
+	//mapper注册器，包含mapper的注册，解析与获取
 	protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
+	//拦截器链
 	protected final InterceptorChain interceptorChain = new InterceptorChain();
+	//初始化查询返回值类型转换器
 	protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
+	//初始化一些类的别名
 	protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+	//语言驱动，用来解析sql注解的sql字符串
 	protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 	protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
 			.conflictMessageProducer((savedValue, targetValue) ->
@@ -93,6 +97,7 @@ public class Configuration {
 	protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
 	protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
 	protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
+	//保存到这里表示已经加载过的资源
 	protected final Set<String> loadedResources = new HashSet<>();
 	protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
 	protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();

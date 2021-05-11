@@ -202,6 +202,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 */
 	@Override
 	public void afterPropertiesSet() {
+		//下一步
 		initHandlerMethods();
 	}
 
@@ -212,6 +213,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 * @see #handlerMethodsInitialized
 	 */
 	protected void initHandlerMethods() {
+		//获取容器中的所有beanName，作为当前请求的处理器的候选，并处理
 		for (String beanName : getCandidateBeanNames()) {
 			if (!beanName.startsWith(SCOPED_TARGET_NAME_PREFIX)) {
 				processCandidateBean(beanName);
@@ -246,6 +248,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	protected void processCandidateBean(String beanName) {
 		Class<?> beanType = null;
 		try {
+			//获取beanName对应的类
 			beanType = obtainApplicationContext().getType(beanName);
 		}
 		catch (Throwable ex) {
@@ -254,7 +257,16 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				logger.trace("Could not resolve type for bean '" + beanName + "'", ex);
 			}
 		}
+		/**
+		 * 判断这个类是不是一个controller，主要就是判断有没有@Controller或者@RequestMapping注解
+		 * 判断的具体实现在{@link org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping#isHandler}
+		 */
 		if (beanType != null && isHandler(beanType)) {
+			/**
+			 * 寻找controller中配置了@RequestMapping的方法
+			 * 并把mapping(请求方式+url)作为key,具体的类，方法等信息作为value保存到
+			 * {@link MappingRegistry#mappingLookup}
+			 */
 			detectHandlerMethods(beanName);
 		}
 	}
@@ -364,7 +376,9 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		request.setAttribute(LOOKUP_PATH, lookupPath);
 		this.mappingRegistry.acquireReadLock();
 		try {
+			//根据请求路径匹配controller的方法
 			HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request);
+			//从容器中获取或创建controller并包装成HandlerMethod返回
 			return (handlerMethod != null ? handlerMethod.createWithResolvedBean() : null);
 		}
 		finally {
@@ -384,8 +398,12 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	@Nullable
 	protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) throws Exception {
 		List<Match> matches = new ArrayList<>();
+		/**
+		 * 从缓存中获取mapping，urlLookup的初始化看{@link org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping#afterPropertiesSet}
+		 */
 		List<T> directPathMatches = this.mappingRegistry.getMappingsByUrl(lookupPath);
 		if (directPathMatches != null) {
+			//根据mapping获取执行的方法，并把mapping和方法信息包装成match放入matches中
 			addMatchingMappings(directPathMatches, matches, request);
 		}
 		if (matches.isEmpty()) {
@@ -601,10 +619,12 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 			try {
 				HandlerMethod handlerMethod = createHandlerMethod(handler, method);
 				validateMethodMapping(handlerMethod, mapping);
+				//mapping->与mapping对应的controller方法
 				this.mappingLookup.put(mapping, handlerMethod);
 
 				List<String> directUrls = getDirectUrls(mapping);
 				for (String url : directUrls) {
+					//保存url与mapping的映射
 					this.urlLookup.add(url, mapping);
 				}
 

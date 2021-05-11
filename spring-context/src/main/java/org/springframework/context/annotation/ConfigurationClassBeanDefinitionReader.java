@@ -144,7 +144,7 @@ class ConfigurationClassBeanDefinitionReader {
 		}
 		//获取配置类的方法
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
-			//解析方法，根据@Bean等注解把方法的返回值解析为bd
+			//解析方法，根据@Bean等注解把方法所携带的信息解析为bd，这里并没有调用方法。
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
 		//解析@ImportResource注解的数据，这个注解可以用于导入xml或groovy文件

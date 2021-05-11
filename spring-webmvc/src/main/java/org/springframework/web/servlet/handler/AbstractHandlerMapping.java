@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
 import org.springframework.util.AntPathMatcher;
@@ -393,6 +395,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	@Override
 	@Nullable
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
+		//获取controller，这是个模板方法，具体由子类实现
 		Object handler = getHandlerInternal(request);
 		if (handler == null) {
 			handler = getDefaultHandler();
@@ -405,7 +408,12 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 			String handlerName = (String) handler;
 			handler = obtainApplicationContext().getBean(handlerName);
 		}
-
+		/**
+		 * 获取调用链，就是拦截器，
+		 * {@link ApplicationObjectSupport}抽象类实现了{@link ApplicationContextAware}在注入ApplicationContext时就注入了拦截器
+		 * {@link DispatcherServlet.properties}中配置的HandlerMapping都实现了该抽象类，
+		 * 所以任何一个初始化时都会初始化拦截器
+		 */
 		HandlerExecutionChain executionChain = getHandlerExecutionChain(handler, request);
 
 		if (logger.isTraceEnabled()) {

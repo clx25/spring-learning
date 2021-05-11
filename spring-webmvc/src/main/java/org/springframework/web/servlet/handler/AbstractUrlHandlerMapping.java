@@ -33,6 +33,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerExecutionChain;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * Abstract base class for URL-mapped {@link org.springframework.web.servlet.HandlerMapping}
@@ -163,6 +164,10 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	@Nullable
 	protected Object lookupHandler(String urlPath, HttpServletRequest request) throws Exception {
 		// Direct match?
+		/**
+		 * 直接从handlerMap获取，handlerMap的初始化看
+		 * {@link AbstractUrlHandlerMapping#registerHandler(String, Object)}
+		 */
 		Object handler = this.handlerMap.get(urlPath);
 		if (handler != null) {
 			// Bean name or resolved handler?
@@ -175,6 +180,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 		}
 
 		// Pattern match?
+		//如果上面的map获取不到，就获取map的key，看能不能ant风格匹配
 		List<String> matchingPatterns = new ArrayList<>();
 		for (String registeredPattern : this.handlerMap.keySet()) {
 			if (getPathMatcher().match(registeredPattern, urlPath)) {
@@ -327,6 +333,10 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 * (a bean name will automatically be resolved into the corresponding handler bean)
 	 * @throws BeansException if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
+	 */
+	/**
+	 * 这个方法内初始化实现{@link Controller}接口的controller，
+	 * 并创建urlPath->controller映射
 	 */
 	protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException {
 		Assert.notNull(urlPath, "URL path must not be null");

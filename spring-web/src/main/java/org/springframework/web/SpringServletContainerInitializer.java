@@ -110,7 +110,10 @@ import org.springframework.util.ReflectionUtils;
  * @see WebApplicationInitializer
  */
 
-
+/**
+ * 在onStartup方法的第一个参数中注入{@link WebApplicationInitializer}的子类Class对象
+ * 所以只要实现了{@link WebApplicationInitializer}，重写的onStartup就会被spring执行
+ */
 @HandlesTypes(WebApplicationInitializer.class)
 public class SpringServletContainerInitializer implements ServletContainerInitializer {
 
@@ -140,6 +143,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 	 * @see WebApplicationInitializer#onStartup(ServletContext)
 	 * @see AnnotationAwareOrderComparator
 	 */
+	//这个方法主要就是通过传入的WebApplicationInitializer类对象，创建对象，并遍历调用onStartup方法
 	@Override
 	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
 			throws ServletException {

@@ -246,10 +246,10 @@ public class MapperBuilderAssistant extends BaseBuilder {
 		if (unresolvedCacheRef) {
 			throw new IncompleteElementException("Cache-ref not yet resolved");
 		}
-
+		//判断这个resultMapId是不是符合当前命名空间
 		id = applyCurrentNamespace(id, false);
 		boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
-
+		//使用所有的信息配置MappedStatement的创建器
 		MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration, id, sqlSource, sqlCommandType)
 				.resource(resource)
 				.fetchSize(fetchSize)
@@ -272,7 +272,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
 		if (statementParameterMap != null) {
 			statementBuilder.parameterMap(statementParameterMap);
 		}
-
+		//使用创建器创建MappedStatement
 		MappedStatement statement = statementBuilder.build();
 		configuration.addMappedStatement(statement);
 		return statement;

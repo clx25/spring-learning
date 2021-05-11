@@ -293,8 +293,9 @@ public abstract class WebApplicationContextUtils {
 	 */
 	public static void initServletPropertySources(MutablePropertySources sources,
 			@Nullable ServletContext servletContext, @Nullable ServletConfig servletConfig) {
-
 		Assert.notNull(sources, "'propertySources' must not be null");
+		//判断属性源中有没有未初始化的servlet相关属性源
+		//如果没有，就把servletContext与servletConfig包装为属性源放入属性源集合中
 		String name = StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME;
 		if (servletContext != null && sources.get(name) instanceof StubPropertySource) {
 			sources.replace(name, new ServletContextPropertySource(name, servletContext));

@@ -66,6 +66,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		/**
 		 * 把内置的一些postProcessor和其他组件注册到beanDefinition
 		 * 这个reader用于解析通过方法注入的bean
+		 * 创建Environment
 		 */
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		/*

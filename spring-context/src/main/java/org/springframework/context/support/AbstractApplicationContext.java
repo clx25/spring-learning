@@ -69,6 +69,7 @@ import org.springframework.context.weaving.LoadTimeWeaverAwareProcessor;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
@@ -359,6 +360,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	@Override
 	public ConfigurableEnvironment getEnvironment() {
 		if (this.environment == null) {
+			//创建环境对象
 			this.environment = createEnvironment();
 		}
 		return this.environment;
@@ -370,6 +372,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * a custom {@link ConfigurableEnvironment} implementation.
 	 */
 	protected ConfigurableEnvironment createEnvironment() {
+		/**
+		 * 创建标准环境，具体初始化查看父类
+		 * @see AbstractEnvironment#AbstractEnvironment()
+		 */
 		return new StandardEnvironment();
 	}
 
@@ -583,7 +589,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			//BeanFactory执行前的准备工作，主要是设置一些属性和注册一些工具对象
+			//BeanFactory执行前的准备工作，主要是设置一些属性和注册一些工具对象，初始化Environment
 			prepareBeanFactory(beanFactory);
 
 			try {
@@ -779,7 +785,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Register default environment beans.
-		//注册一些默认的环境bean
+		//初始化环境，注册一些默认的环境bean
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 		}
@@ -938,6 +944,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Register statically specified listeners first.
 		//注册创建容器时添加的监听器
 		for (ApplicationListener<?> listener : getApplicationListeners()) {
+			//把监听器对象添加到检索器中
 			getApplicationEventMulticaster().addApplicationListener(listener);
 		}
 
@@ -946,6 +953,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		//从容器中获取扫描到的监听器
 		String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
 		for (String listenerBeanName : listenerBeanNames) {
+			//把监听器的beanName注册到检索器中，检索器位于广播器内部
 			getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
 		}
 

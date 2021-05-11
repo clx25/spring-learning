@@ -156,7 +156,7 @@ public final class SpringFactoriesLoader {
 					}
 				}
 			}
-			//保存到缓存
+			//第一次加载就会把spring.factories所有的k-v加载，并缓存
 			cache.put(classLoader, result);
 			return result;
 		}

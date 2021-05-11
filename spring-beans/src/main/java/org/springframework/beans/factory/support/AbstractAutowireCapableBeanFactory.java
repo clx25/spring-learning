@@ -20,11 +20,14 @@ import org.apache.commons.logging.Log;
 import org.springframework.beans.*;
 import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
+import org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.config.*;
 import org.springframework.core.*;
 import org.springframework.lang.Nullable;
 import org.springframework.util.*;
 import org.springframework.util.ReflectionUtils.MethodCallback;
+
+
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
@@ -473,10 +476,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 
-			/*
+			/**
 			第一次调用后置处理器
-			执行实例化之前的后置处理器，InstantiationAwareBeanPostProcessor的before
-			如果返回了一个不为null的对象，那么执行所有BeanPostProcessor的after
+			执行实例化之前的后置处理器，{@link InstantiationAwareBeanPostProcessor#postProcessBeforeInstantiation}
+			如果返回了一个不为null的对象，那么执行所有{@link BeanPostProcessor#postProcessAfterInitialization}
 			所以可以自己注册一个InstantiationAwareBeanPostProcessor的子类并在before方法中返回一个对象
 			 */
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
@@ -544,15 +547,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (!mbd.postProcessed) {
 				try {
 
-					/*
+					/**
 					第三次调用后置处理器
-					1.调用CommonAnnotationBeanPostProcessor，
-					注册了postConstruct，PreDestroy,Resource三个注解到属性中，
-					然后通过InitDestroyAnnotationBeanPostProcessor对bean和其父类行扫描，判断有没有那三个注解，有就注册到bd中
-					2.AutowiredAnnotationBeanPostProcessor
-					注册了Value，Autowired两个注解，对类进行解析，并把解析出的数据注册到bd中
-					3.ApplicationListenerDetector
-					判断这个bean是不是ApplicationListener，是就添加到容器中
+					1.{@link InitDestroyAnnotationBeanPostProcessor#postProcessMergedBeanDefinition}
+					 解析postConstruct，PreDestroy，有就设置当前类bd属性
+					 {@link CommonAnnotationBeanPostProcessor#postProcessMergedBeanDefinition}，
+					 解析Resource，有就设置当前类bd属性
+					2.{@link AutowiredAnnotationBeanPostProcessor#postProcessMergedBeanDefinition}
+					解析Value，Autowired两个注解，如果有，设置到当前类bd中
+					3.{@link ApplicationListenerDetector#postProcessMergedBeanDefinition}
+					判断这个bean是不是{@link org.springframework.context.ApplicationListener}，是就添加到集合中
 					 */
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				} catch (Throwable ex) {
@@ -1201,8 +1205,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Candidate constructors for autowiring?
-		//第二次后置处理器调用
-		//调用后置处理器推断构造方法,如果为无参构造器或无法判断，都返回null
+		/**
+		 * 第二次后置处理器调用{@link AutowiredAnnotationBeanPostProcessor#determineCandidateConstructors}
+		 * 推断构造方法,如果为无参构造器或无法判断，都返回null
+		 */
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
 		//判断有没有构造器，或者注入模型为构造器注入
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
@@ -1212,7 +1218,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Preferred constructors for default construction?
-		//获取主构造函数，好像kotlin有主构造函数概念
+		//获取主构造函数，好像kotlin有主构造函数概念，暂时不清楚
 		ctors = mbd.getPreferredConstructors();
 		if (ctors != null) {
 			return autowireConstructor(beanName, mbd, ctors, null);
@@ -1410,7 +1416,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		/*
 		解析byType与byName,创建需要注入的对象，保存到pvs中，在本方法的最后一个if中完成注入
 		byType：根据set方法中入参的类型，如果找不到或有多个，抛异常
-		byName:根据set方法的名字作为beanName寻找bean，如果没找到就不掉用set方法，不抛异常
+		byName:根据set方法的名字作为beanName寻找bean，如果没找到就不调用set方法，不抛异常
 		 */
 		if (resolvedAutowireMode == AUTOWIRE_BY_NAME || resolvedAutowireMode == AUTOWIRE_BY_TYPE) {
 			MutablePropertyValues newPvs = new MutablePropertyValues(pvs);

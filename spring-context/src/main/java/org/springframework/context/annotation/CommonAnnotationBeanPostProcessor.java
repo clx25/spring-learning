@@ -288,11 +288,14 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 		}
 	}
 
-
+	//在构造器中注册了PreDestroy，PostConstruct两个初始化注解
+	//在静态代码块中注册了Resource注解
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
 		super.postProcessMergedBeanDefinition(beanDefinition, beanType, beanName);
+		//扫描和包装属性和方法上的Resource注解
 		InjectionMetadata metadata = findResourceMetadata(beanName, beanType, null);
+		//检查有没有属性注入相关注解，有就设置到当前类bd中
 		metadata.checkConfigMembers(beanDefinition);
 	}
 
@@ -344,6 +347,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 					if (metadata != null) {
 						metadata.clear(pvs);
 					}
+					//解析，创建元数据
 					metadata = buildResourceMetadata(clazz);
 					this.injectionMetadataCache.put(cacheKey, metadata);
 				}
