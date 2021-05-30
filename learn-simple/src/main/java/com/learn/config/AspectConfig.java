@@ -2,9 +2,11 @@ package com.learn.config;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Aspect
+@Aspect("perthis(execution(* com.learn.test.AopTest.*(..)))")
+@Scope("prototype")
 @Component
 public class AspectConfig {
 

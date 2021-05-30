@@ -81,7 +81,9 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	 */
 	public List<Advisor> buildAspectJAdvisors() {
 		List<String> aspectNames = this.aspectBeanNames;
-		//第一个bean初始化的时候就会扫描所有类，并过滤出有Aspect注解的类，所以之后的bean初始化直接执行后面的逻辑
+		// 只有第一个需要代理的bean进入这个方法aspectNames才等于null
+		// 然后进行初始化，初始化的时候就会扫描所有类，并过滤出有Aspect注解的类，
+		// 所以之后需要代理的bean进入这个方法aspectNames的值都不为null
 		if (aspectNames == null) {
 			synchronized (this) {
 				aspectNames = this.aspectBeanNames;
@@ -105,28 +107,33 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 						if (this.advisorFactory.isAspect(beanType)) {
 							//如果有Aspect注解，那么添加到集合中
 							aspectNames.add(beanName);
-							//后面是解析这个类
+							//后面是解析Aspect注解，并获取切面得实例化模型
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
+							//判断切面实例化模型是不是singleton,默认就是singleton
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
+								//创建一个实例工厂
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								//通过advisor工厂解析advice注解，并包装成advisor
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
+								//这里判断如果bean是单例，就把advisor进行缓存，如果不是，就把切面信息工厂缓存
 								if (this.beanFactory.isSingleton(beanName)) {
-									//解析后的单例Advisor
 									this.advisorsCache.put(beanName, classAdvisors);
 								} else {
-									//非单例Advisor
 									this.aspectFactoryCache.put(beanName, factory);
 								}
 								advisors.addAll(classAdvisors);
 							} else {
 								// Per target or per this.
+								//如果切面类是原型，指定的类又是单例，则抛出异常
 								if (this.beanFactory.isSingleton(beanName)) {
 									throw new IllegalArgumentException("Bean with name '" + beanName +
 											"' is a singleton, but aspect instantiation model is not singleton");
 								}
+								//创建一个原型工厂
 								MetadataAwareAspectInstanceFactory factory =
 										new PrototypeAspectInstanceFactory(this.beanFactory, beanName);
+								//缓存工厂
 								this.aspectFactoryCache.put(beanName, factory);
 								advisors.addAll(this.advisorFactory.getAdvisors(factory));
 							}
@@ -143,7 +150,8 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 			return Collections.emptyList();
 		}
 		List<Advisor> advisors = new ArrayList<>();
-		//获取Advisor，如果是单例，从缓存中获取，如果不是单例，从缓存中获取工厂，创建一个Advisor
+		// 前面的方法中，对所有的advisor都进行了初始化，所以可以从这里直接获取
+		// 获取Advisor，如果是单例，从缓存中获取，如果不是单例，从缓存中获取工厂，创建一个Advisor
 		for (String aspectName : aspectNames) {
 			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
 			if (cachedAdvisors != null) {

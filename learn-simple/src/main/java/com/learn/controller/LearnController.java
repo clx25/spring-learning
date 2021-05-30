@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
 import com.learn.config.Post3;
+import org.springframework.validation.annotation.Validated;
 
-
+@Validated
 public class LearnController {
 
 

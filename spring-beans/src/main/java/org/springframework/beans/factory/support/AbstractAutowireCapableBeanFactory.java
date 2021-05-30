@@ -1443,8 +1443,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
 					/**
-					 * 完成属性注入，在CommonAnnotationBeanPostProcessor中完成@Resource注入
-					 * @see org.springframework.context.annotation.CommonAnnotationBeanPostProcessor
+					 * 完成属性注入，在{@link org.springframework.context.annotation.CommonAnnotationBeanPostProcessor#postProcessProperties}中完成@Resource注入
 					 * 在AutowiredAnnotationBeanPostProcessor中完成了@Autowire和@Value注入
 					 * @see AutowiredAnnotationBeanPostProcessor
 					 */

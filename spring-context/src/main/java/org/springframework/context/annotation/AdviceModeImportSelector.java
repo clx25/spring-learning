@@ -64,6 +64,8 @@ public abstract class AdviceModeImportSelector<A extends Annotation> implements 
 	 */
 	@Override
 	public final String[] selectImports(AnnotationMetadata importingClassMetadata) {
+		//从当前类（TransactionManagementConfigurationSelector）的AdviceModeImportSelector父类中解析泛型类型
+		//结果为EnableTransactionManagement，因为当前类就是通过这个注解导入的
 		Class<?> annType = GenericTypeResolver.resolveTypeArgument(getClass(), AdviceModeImportSelector.class);
 		Assert.state(annType != null, "Unresolvable type argument for AdviceModeImportSelector");
 
@@ -73,8 +75,9 @@ public abstract class AdviceModeImportSelector<A extends Annotation> implements 
 					"@%s is not present on importing class '%s' as expected",
 					annType.getSimpleName(), importingClassMetadata.getClassName()));
 		}
-
+		//从注解中获取mode属性的值
 		AdviceMode adviceMode = attributes.getEnum(getAdviceModeAttributeName());
+		//从子类中获取需要创建的类
 		String[] imports = selectImports(adviceMode);
 		if (imports == null) {
 			throw new IllegalArgumentException("Unknown AdviceMode: " + adviceMode);

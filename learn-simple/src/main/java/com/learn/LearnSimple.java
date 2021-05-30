@@ -4,6 +4,7 @@ package com.learn;
 import com.learn.config.*;
 import com.learn.controller.InsertTestImpll;
 import com.learn.controller.LearnController;
+import com.learn.test.AopTest;
 import com.learn.test.FactoryBeanTest;
 import com.learn.test.LookupTest;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -54,10 +55,13 @@ public class LearnSimple {
 		System.out.println(p);
 		InsertTestImpll bean3 = ac.getBean("insertTestImpll",InsertTestImpll.class);
 		System.out.println(bean3.getApplicationContext());
-		FactoryBeanTest factoryBeanTest = ac.getBean("factoryBeanTest", FactoryBeanTest.class);
+		FactoryBeanTest factoryBeanTest = ac.getBean("&factoryBeanTest", FactoryBeanTest.class);
 
 		LookupTest lookupTest = ac.getBean("lookupTest", LookupTest.class);
 		System.out.println(lookupTest.lookup());
+
+		AopTest aopTest = ac.getBean("aopTest", AopTest.class);
+		aopTest.aopTest();
 
 //		ProfileTest profileTest = ac.getBean("profileTest", ProfileTest.class);
 //		System.out.println(profileTest);

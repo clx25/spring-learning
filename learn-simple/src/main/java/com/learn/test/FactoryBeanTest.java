@@ -19,6 +19,12 @@ public class FactoryBeanTest implements FactoryBean<FactoryBeanTest.FactoryBeanI
 	public static class FactoryBeanInner{
 
 	}
+
+
+	public void shutdown() {
+		System.out.println("FactoryBeanTest->shutdown");
+	}
+
 }
 
 

@@ -99,6 +99,9 @@ public class AspectJAwareAdvisorAutoProxyCreator extends AbstractAdvisorAutoProx
 		//获取Advisor集合
 		List<Advisor> candidateAdvisors = findCandidateAdvisors();
 		for (Advisor advisor : candidateAdvisors) {
+
+			//这个AspectJPointcutAdvisor类型是<aop:config/>方式配置的aop
+			//解析xml生成的就是AspectJPointcutAdvisor，由于解析xml是已经生成了，所以这里需要跳过
 			if (advisor instanceof AspectJPointcutAdvisor &&
 					((AspectJPointcutAdvisor) advisor).getAspectName().equals(beanName)) {
 				return true;

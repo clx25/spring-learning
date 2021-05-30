@@ -36,6 +36,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
+import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -287,8 +288,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	@Override
 	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
 		if (bean != null) {
-			//从缓存获取
+			//创建缓存key
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			/**
+			 * 在{@link DefaultSingletonBeanRegistry#getSingleton(java.lang.String, boolean)}中
+			 * 通过工厂获取的代理bean就会被放到这个集合中，表示这个bean的代理已经提前创建了
+			 */
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
 				//判断是否需要代理，选择代理方式，创建代理并返回
 				return wrapIfNecessary(bean, beanName, cacheKey);
@@ -328,12 +333,15 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * @return a proxy wrapping the bean, or the raw bean instance as-is
 	 */
 	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+		//判断是不是TargetSource
 		if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
 			return bean;
 		}
+		//advisedBeans保存的是已经代理过的bean
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
+		//判断是不是spring内置的bean，或者应该跳过的bean
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
@@ -341,12 +349,19 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 		// Create proxy if we have advice.
 		//获取增强器（Advisors）,spring中Advisors是由拦截器实现的
+		//每一个Advice，如before,after会被包装成不同的advice
+		//每一个advice又会被包装到一个Advisor
+		//有点类似springmvc的HandlerExecutionChain与HandlerAdapter的关系
+		//一个是根据不同的源生成的执行内容，一个是适合该内容的执行者
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
+			//如果获取的Advisors不为空，表示这个bean需要代理，那么就标记一下这个bean已经获取过了advice
+			//advise:动词，建议 advice:名词，建议
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
 			//创建代理
 			Object proxy = createProxy(
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+			//缓存代理类的类型
 			this.proxyTypes.put(cacheKey, proxy.getClass());
 			return proxy;
 		}

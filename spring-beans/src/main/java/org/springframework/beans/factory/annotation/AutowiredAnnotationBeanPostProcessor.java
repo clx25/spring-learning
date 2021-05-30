@@ -404,7 +404,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				}
 			}
 		}
-		//有注解构造器candidateConstructors才有值，如果是无法判断或无参构造器长度为0
+		//是否有推断出来的适合的构造器，如果是无法判断或无参构造器长度为0
 		return (candidateConstructors.length > 0 ? candidateConstructors : null);
 	}
 

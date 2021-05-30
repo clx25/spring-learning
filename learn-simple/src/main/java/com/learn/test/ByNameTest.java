@@ -14,7 +14,7 @@ public class ByNameTest {
 		return common;
 	}
 
-	public void setCC(A common) {
+	public void setA(A common) {
 		this.common = common;
 	}
 

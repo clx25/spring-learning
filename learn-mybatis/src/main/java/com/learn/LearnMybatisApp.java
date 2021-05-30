@@ -3,16 +3,12 @@ package com.learn;
 
 import com.learn.config.MyBatisConfig;
 import com.learn.controller.UserController;
-import com.learn.mapper.TestController;
 import com.learn.mapper.UserMapper;
 import com.learn.service.JdbcService;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.session.SqlSessionManager;
 import org.junit.jupiter.api.Test;
-import org.springframework.cglib.core.DebuggingClassWriter;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 

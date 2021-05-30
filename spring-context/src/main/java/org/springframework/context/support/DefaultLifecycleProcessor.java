@@ -138,10 +138,15 @@ public class DefaultLifecycleProcessor implements LifecycleProcessor, BeanFactor
 	// Internal helpers
 
 	private void startBeans(boolean autoStartupOnly) {
+		//获取容器中Lifecycle的实现类
 		Map<String, Lifecycle> lifecycleBeans = getLifecycleBeans();
 		Map<Integer, LifecycleGroup> phases = new HashMap<>();
 		lifecycleBeans.forEach((beanName, bean) -> {
 			if (!autoStartupOnly || (bean instanceof SmartLifecycle && ((SmartLifecycle) bean).isAutoStartup())) {
+				/**
+				 * 如果实现了{@link SmartLifecycle}那么也会实现{@link Phased}
+				 * {@link Phased#getPhase()}返回一个int值，表示这个bean执行的顺序，数字小的先执行
+				 */
 				int phase = getPhase(bean);
 				LifecycleGroup group = phases.get(phase);
 				if (group == null) {
@@ -155,6 +160,7 @@ public class DefaultLifecycleProcessor implements LifecycleProcessor, BeanFactor
 			List<Integer> keys = new ArrayList<>(phases.keySet());
 			Collections.sort(keys);
 			for (Integer key : keys) {
+				//调用LifecycleGroup的start()
 				phases.get(key).start();
 			}
 		}
