@@ -752,7 +752,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		/*
 		如果一个类通过实现一个接口的标准set方法注入了一个对象，
-		那么spring就会忽略这个通过方法注入的对象以byType或byName的方式注入
+		那么spring就会忽略这个通过方法注入的属性以byType或byName的方式注入
 		 */
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class AutowireModeBeanDefinitionRegistryPostProcessorTest implements BeanDefinitionRegistryPostProcessor {
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-		AbstractBeanDefinition byTypeTest = (AbstractBeanDefinition) registry.getBeanDefinition("byTypeTest");
-		byTypeTest.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
+		AbstractBeanDefinition byTypeTest = (AbstractBeanDefinition) registry.getBeanDefinition("autowireConstructorModeTest");
+		byTypeTest.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
 		AbstractBeanDefinition byNameTest = (AbstractBeanDefinition) registry.getBeanDefinition("byNameTest");
 		byNameTest.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_NAME);
 	}

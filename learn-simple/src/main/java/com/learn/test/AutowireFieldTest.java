@@ -9,8 +9,10 @@ import javax.annotation.Resource;
 
 @Component
 public class AutowireFieldTest {
+
 	@Resource
 	private A a;
+
 	@Resource
 	private B b;
 

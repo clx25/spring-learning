@@ -1,6 +1,11 @@
 package com.learn.config;
 
+import com.learn.model.TargetSourceReturn;
+import com.learn.test.AutowireConstructorModeTest;
 import com.learn.test.InitDesotryMethodTest;
+import org.springframework.aop.Pointcut;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
+import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.context.annotation.*;
@@ -19,6 +24,7 @@ import org.springframework.context.annotation.*;
 //@Profile("")
 public class LearnConfig {
 
+
 	@Bean
 	public Post2 post2() {
 		return new Post2();
@@ -28,5 +34,12 @@ public class LearnConfig {
 	@Bean(initMethod = "initMethod", destroyMethod = AbstractBeanDefinition.INFER_METHOD)
 	public InitDesotryMethodTest initDesotryMethodTest(){
 		return new InitDesotryMethodTest();
+	}
+
+	public void v(){
+		new MethodBeforeAdviceTest();
+		AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+		pointcut.setExpression("execution(* com.learn.test.AopTarget.*(..)");
+
 	}
 }

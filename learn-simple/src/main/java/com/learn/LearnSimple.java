@@ -4,9 +4,11 @@ package com.learn;
 import com.learn.config.*;
 import com.learn.controller.InsertTestImpll;
 import com.learn.controller.LearnController;
-import com.learn.test.AopTest;
+import com.learn.event.CustomEvent;
+import com.learn.test.aop.AopTarget;
 import com.learn.test.FactoryBeanTest;
 import com.learn.test.LookupTest;
+import com.learn.test.TargetSourceTest;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -38,6 +40,8 @@ public class LearnSimple {
 //		ac.publishEvent(new MyPostProcessor("666"));
 		ac.refresh();
 
+		ac.publishEvent(new CustomEvent());
+
 
 
 
@@ -60,13 +64,17 @@ public class LearnSimple {
 		LookupTest lookupTest = ac.getBean("lookupTest", LookupTest.class);
 		System.out.println(lookupTest.lookup());
 
-		AopTest aopTest = ac.getBean("aopTest", AopTest.class);
-		aopTest.aopTest();
+		AopTarget aopTarget = ac.getBean("aopTarget", AopTarget.class);
+		aopTarget.aopTest();
+
+		TargetSourceTest targetSourceTest = ac.getBean("targetSourceTest", TargetSourceTest.class);
 
 //		ProfileTest profileTest = ac.getBean("profileTest", ProfileTest.class);
 //		System.out.println(profileTest);
 
-		ac.getBeanFactory().destroySingletons();
+//		ac.getBeanFactory().destroySingletons();
+		ac.close();
+//		ac.registerShutdownHook();
 	}
 
 

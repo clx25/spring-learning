@@ -586,6 +586,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		}
 		if (wac == null) {
 			// No context instance is defined for this servlet -> create a local one
+			//刷新上下文
 			wac = createWebApplicationContext(rootContext);
 		}
 
@@ -663,6 +664,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		if (configLocation != null) {
 			wac.setConfigLocation(configLocation);
 		}
+		//刷新上下文
 		configureAndRefreshWebApplicationContext(wac);
 
 		return wac;
@@ -702,6 +704,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 
 		postProcessWebApplicationContext(wac);
 		applyInitializers(wac);
+		//刷新上下文
 		wac.refresh();
 	}
 

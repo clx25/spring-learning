@@ -60,6 +60,13 @@ import org.springframework.util.CollectionUtils;
  * @see EventListenerFactory
  * @see DefaultEventListenerFactory
  */
+
+/**
+ * 这个类把使用{@link EventListener}注解的方法注册为一个{@link ApplicationListener}
+ * 具体使用查看{@link com.learn.test.EventListenerTest}
+ * 原理：在{@link #processBean}中使用{@link ApplicationListenerMethodAdapter}适配器把一个普通类
+ * 包装为监听器
+ */
 public class EventListenerMethodProcessor
 		implements SmartInitializingSingleton, ApplicationContextAware, BeanFactoryPostProcessor {
 
@@ -176,6 +183,7 @@ public class EventListenerMethodProcessor
 					for (EventListenerFactory factory : factories) {
 						if (factory.supportsMethod(method)) {
 							Method methodToUse = AopUtils.selectInvocableMethod(method, context.getType(beanName));
+							//通过适配器构建监听器的方法
 							ApplicationListener<?> applicationListener =
 									factory.createApplicationListener(beanName, targetType, methodToUse);
 							if (applicationListener instanceof ApplicationListenerMethodAdapter) {

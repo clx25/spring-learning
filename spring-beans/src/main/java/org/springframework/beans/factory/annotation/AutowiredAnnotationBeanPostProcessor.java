@@ -128,6 +128,14 @@ import org.springframework.util.StringUtils;
  * @see Autowired
  * @see Value
  */
+
+/**
+ * 这个类的功能
+ * 1. 推断构造方法，
+ * 2. 熟悉自动注入
+ * 3. 方法自动注入
+ * 4. 解析Lookup方法
+ */
 public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
 		implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware {
 

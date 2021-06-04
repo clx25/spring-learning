@@ -71,6 +71,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Dave Syer
  * @since 2.0
  */
+
+/**
+ * 该类实现了{@link ClassFilter}所以具备了判断表达式是否符合类的能力
+ * 又实现了{@link IntroductionAwareMethodMatcher}所以具备类判断表达式是否符合某个方法的能力
+ */
 @SuppressWarnings("serial")
 public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		implements ClassFilter, IntroductionAwareMethodMatcher, BeanFactoryAware {
